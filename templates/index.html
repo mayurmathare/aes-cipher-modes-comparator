@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AES Block Cipher Modes Comparison | Cryptography Practical</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <!-- Top Navigation / Header -->
+    <header class="site-header">
+        <div class="container header-container">
+            <div class="brand">
+                <div class="brand-icon">
+                    <i class="fa-solid fa-shield-halved"></i>
+                </div>
+                <div class="brand-text">
+                    <span class="project-tag">Cryptography Practical / TAE</span>
+                    <h1>AES Block Cipher Modes Comparison</h1>
+                </div>
+            </div>
+            <div class="header-badges">
+                <span class="tech-badge"><i class="fa-brands fa-python"></i> Python & Flask</span>
+                <span class="tech-badge"><i class="fa-solid fa-lock"></i> PyCryptodome (AES-128)</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="container main-content">
+        
+        <!-- Objective Banner -->
+        <section class="objective-card">
+            <div class="objective-icon">
+                <i class="fa-solid fa-graduation-cap"></i>
+            </div>
+            <div class="objective-body">
+                <h3>Project Objective</h3>
+                <p>
+                    Interactive cryptographic simulator demonstrating and evaluating the five standard AES block cipher modes:
+                    <strong>ECB (Electronic Codebook)</strong>, <strong>CBC (Cipher Block Chaining)</strong>, 
+                    <strong>CFB (Cipher Feedback)</strong>, <strong>OFB (Output Feedback)</strong>, and <strong>CTR (Counter Mode)</strong>.
+                    Analyze how initialization vectors (IV), counter nonces, and padding affect security, parallelization, and pattern diffusion.
+                </p>
+            </div>
+        </section>
+
+        <!-- Input Section -->
+        <section class="card input-section">
+            <div class="card-header">
+                <h2><i class="fa-solid fa-sliders"></i> Cipher Configuration & Inputs</h2>
+                <span class="header-subtitle">Same Plaintext & AES Key applied simultaneously to all 5 modes</span>
+            </div>
+            <div class="card-body">
+                <div class="form-grid">
+                    <!-- Plaintext Input -->
+                    <div class="form-group">
+                        <div class="label-row">
+                            <label for="plaintext-input">
+                                <i class="fa-solid fa-file-lines"></i> Plaintext Message:
+                            </label>
+                            <span class="byte-counter" id="pt-byte-count">24 bytes</span>
+                        </div>
+                        <textarea id="plaintext-input" rows="3" placeholder="Enter plaintext message...">HELLO HELLO HELLO HELLO</textarea>
+                        <div class="input-presets">
+                            <span class="preset-label">Presets:</span>
+                            <button type="button" class="btn-preset" data-text="HELLO HELLO HELLO HELLO">Default</button>
+                            <button type="button" class="btn-preset" data-text="CRYPTOGRAPHY_TAE">16-Byte Block</button>
+                            <button type="button" class="btn-preset" data-text="CONFIDENTIAL DATA: STUDENT ROLL NO 42 - TAE PRACTICAL SUBMISSION">Multi-Block Text</button>
+                        </div>
+                    </div>
+
+                    <!-- AES Key Input -->
+                    <div class="form-group">
+                        <div class="label-row">
+                            <label for="key-input">
+                                <i class="fa-solid fa-key"></i> AES Secret Key (16 Bytes / 128-bit):
+                            </label>
+                            <span class="byte-counter" id="key-byte-count">16 bytes (Valid)</span>
+                        </div>
+                        <div class="input-with-action">
+                            <input type="text" id="key-input" value="0123456789abcdef" maxlength="32" placeholder="16 characters for AES-128">
+                            <button type="button" id="btn-rand-key" class="btn-secondary" title="Generate Random 16-Byte Key">
+                                <i class="fa-solid fa-dice"></i> Random
+                            </button>
+                        </div>
+                        <small class="form-hint">
+                            Must be exactly 16 bytes for AES-128 (e.g. <code>0123456789abcdef</code>).
+                        </small>
+                    </div>
+                </div>
+
+                <!-- Primary Action Button -->
+                <div class="action-row">
+                    <button type="button" id="btn-compare" class="btn-primary">
+                        <i class="fa-solid fa-play"></i> Compare All Modes
+                    </button>
+                    <div class="shared-params-preview" id="shared-params-preview" style="display: none;">
+                        <span><i class="fa-solid fa-circle-nodes"></i> Shared IV (CBC/CFB/OFB): <code id="preview-iv">-</code></span>
+                        <span><i class="fa-solid fa-stopwatch"></i> CTR Nonce: <code id="preview-nonce">-</code></span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Mode Results Display Section -->
+        <section class="results-section" id="results-section">
+            <div class="section-title-row">
+                <h2><i class="fa-solid fa-cubes"></i> Mode Execution & Security Analysis</h2>
+                <div class="view-controls">
+                    <button type="button" class="btn-view-toggle active" id="btn-view-detailed">
+                        <i class="fa-solid fa-table-cells-large"></i> Detailed Cards
+                    </button>
+                </div>
+            </div>
+
+            <!-- Loader -->
+            <div class="loading-state" id="loading-state" style="display: none;">
+                <div class="spinner"></div>
+                <p>Executing AES across ECB, CBC, CFB, OFB, and CTR modes with PyCryptodome...</p>
+            </div>
+
+            <!-- 5 Mode Cards Grid -->
+            <div class="modes-grid" id="modes-grid">
+                <!-- Cards will be dynamically injected by JavaScript -->
+            </div>
+        </section>
+
+        <!-- Comparison Table Section (Requirement 13 & 14) -->
+        <section class="card comparison-table-section" id="comparison-table-section">
+            <div class="card-header">
+                <h2><i class="fa-solid fa-table-list"></i> Cryptographic Modes Comparison Matrix</h2>
+                <span class="header-subtitle">Standardized evaluation across security, padding, IV requirements, and performance</span>
+            </div>
+            <div class="card-body no-padding">
+                <div class="table-responsive">
+                    <table class="comparison-table">
+                        <thead>
+                            <tr>
+                                <th>Mode</th>
+                                <th>Pattern Hiding</th>
+                                <th>Padding</th>
+                                <th>IV / Nonce</th>
+                                <th>Parallel Encryption</th>
+                                <th>Security Concern</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for row in comparison_matrix %}
+                            <tr class="mode-row-{{ row.mode.lower() }}">
+                                <td class="col-mode">
+                                    <div class="mode-title-cell">
+                                        <span class="mode-badge">{{ row.mode }}</span>
+                                        <span class="mode-full">{{ row.full_name }}</span>
+                                    </div>
+                                </td>
+                                <td class="col-pattern">
+                                    <span class="badge {{ row.pattern_class }}">
+                                        {% if row.pattern_hiding == 'Yes' %}
+                                        <i class="fa-solid fa-check"></i> Yes
+                                        {% else %}
+                                        <i class="fa-solid fa-xmark"></i> No
+                                        {% endif %}
+                                    </span>
+                                </td>
+                                <td class="col-padding">
+                                    <code>{{ row.padding }}</code>
+                                </td>
+                                <td class="col-iv">
+                                    <span class="tag-pill">{{ row.iv_nonce }}</span>
+                                </td>
+                                <td class="col-parallel">
+                                    <span class="badge {{ row.parallel_class }}">
+                                        {{ row.parallel_encryption }}
+                                    </span>
+                                </td>
+                                <td class="col-concern">
+                                    <div class="security-concern-box">
+                                        <i class="fa-solid fa-triangle-exclamation"></i>
+                                        <span>{{ row.security_concern }}</span>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- ECB Pattern Demonstration Section (Requirement 15) -->
+        <section class="card ecb-demo-section" id="ecb-demo-section">
+            <div class="card-header demo-header">
+                <div class="demo-header-title">
+                    <span class="alert-tag"><i class="fa-solid fa-triangle-exclamation"></i> Security Vulnerability Lab</span>
+                    <h2>ECB Pattern Leakage Demonstration</h2>
+                </div>
+                <span class="header-subtitle">Empirical proof that identical plaintext blocks yield identical ciphertext blocks in ECB</span>
+            </div>
+            <div class="card-body">
+                <div class="demo-description">
+                    <p>
+                        In <strong>Electronic Codebook (ECB)</strong> mode, each 16-byte block is encrypted with the key independently.
+                        Therefore, whenever two plaintext blocks have identical content, their resulting ciphertext blocks are 
+                        <strong>100% identical</strong>. In contrast, chaining modes like <strong>CBC</strong> XOR previous blocks and use an unpredictable IV,
+                        obliterating all repeated patterns.
+                    </p>
+                </div>
+
+                <div class="demo-controls">
+                    <div class="form-group">
+                        <label for="ecb-demo-input">
+                            <i class="fa-solid fa-repeat"></i> Repeated Plaintext Input (Test multiple 16-byte blocks):
+                        </label>
+                        <div class="input-with-action">
+                            <input type="text" id="ecb-demo-input" value="AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" placeholder="e.g. 32 A's (two 16-byte blocks)">
+                            <button type="button" id="btn-run-ecb-demo" class="btn-primary">
+                                <i class="fa-solid fa-flask-vial"></i> Test Pattern Leakage
+                            </button>
+                        </div>
+                        <div class="demo-presets">
+                            <span class="preset-label">Test Samples:</span>
+                            <button type="button" class="btn-preset-demo" data-text="AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA">32x 'A' (2 Identical Blocks)</button>
+                            <button type="button" class="btn-preset-demo" data-text="SECRET_PASSWORD!SECRET_PASSWORD!">Duplicate 'SECRET_PASSWORD!'</button>
+                            <button type="button" class="btn-preset-demo" data-text="111122223333444411112222333344441111222233334444">3x 16-Byte Repeated Pattern</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Demo Visual Comparison Output -->
+                <div class="demo-results" id="demo-results">
+                    <!-- Injected via JavaScript -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Educational Reference & Theory -->
+        <section class="card theory-section">
+            <div class="card-header">
+                <h2><i class="fa-solid fa-book-open"></i> Practical / TAE Theoretical Summary</h2>
+            </div>
+            <div class="card-body">
+                <div class="theory-grid">
+                    <div class="theory-item">
+                        <h4><i class="fa-solid fa-cube"></i> Block Ciphers vs Modes</h4>
+                        <p>AES encrypts a single fixed block of 128 bits (16 bytes). Modes of operation describe how to repeatedly apply AES's single-block transformation to encrypt messages of arbitrary length securely.</p>
+                    </div>
+                    <div class="theory-item">
+                        <h4><i class="fa-solid fa-shuffle"></i> Why IVs Matter</h4>
+                        <p>An Initialization Vector (IV) ensures that encrypting the exact same message twice under the same key produces completely distinct ciphertexts, thwarting replay and codebook matching attacks.</p>
+                    </div>
+                    <div class="theory-item">
+                        <h4><i class="fa-solid fa-bars-staggered"></i> Stream Modes (CFB, OFB, CTR)</h4>
+                        <p>CFB, OFB, and CTR turn the block cipher into a stream cipher by generating a keystream that is XORed with the plaintext. Hence, ciphertext length matches plaintext length with zero padding overhead.</p>
+                    </div>
+                    <div class="theory-item">
+                        <h4><i class="fa-solid fa-bolt"></i> CTR Mode Advantage</h4>
+                        <p>CTR mode enables random access and simultaneous parallel processing of all blocks across multiple CPU cores, making it the mode of choice for modern TLS, IPSec, and disk encryption.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+        <div class="container footer-container">
+            <p><strong>Cryptography Practical / TAE Simulator</strong> &bull; AES-128 Block Cipher Modes Comparison</p>
+            <p class="footer-note">Built with Python &bull; Flask &bull; PyCryptodome &bull; No Database Required</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>
