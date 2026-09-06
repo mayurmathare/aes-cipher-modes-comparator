@@ -159,8 +159,8 @@ document.addEventListener('DOMContentLoaded', () => {
             padding_requirement: 'Yes (PKCS#7 padding required to pad plaintext to 16-byte block multiple)',
             iv_nonce_requirement: 'None (ECB does not take an IV or Nonce)',
             iv_hex: null,
-            security_observation: 'Identical plaintext blocks produce identical ciphertext blocks. Lacks semantic security; exposes underlying patterns.',
-            parallel_encryption: 'Yes'
+            security_observation: 'Repeated plaintext patterns can be revealed; identical plaintext blocks produce identical ciphertext blocks. Lacks semantic security; does not provide authentication.',
+            parallel_encryption: 'Yes (Parallelizable)'
         };
 
         // 2. CBC (PKCS#7 padding, 16-byte random IV)
@@ -186,8 +186,8 @@ document.addEventListener('DOMContentLoaded', () => {
             padding_requirement: 'Yes (PKCS#7 padding required before chaining XOR operations)',
             iv_nonce_requirement: 'IV (16-byte random, unpredictable Initialization Vector)',
             iv_hex: ivHex,
-            security_observation: 'IV must be unpredictable; CBC alone does not provide authentication. Vulnerable to padding oracle attacks if not authenticated.',
-            parallel_encryption: 'No for encryption'
+            security_observation: 'Hides plaintext patterns. Requires an unpredictable IV; encryption is sequential; does not provide authentication or integrity.',
+            parallel_encryption: 'No (Sequential)'
         };
 
         // 3. CFB (Stream mode, 16-byte random IV)
@@ -213,8 +213,8 @@ document.addEventListener('DOMContentLoaded', () => {
             padding_requirement: 'No traditional padding (Acts as a stream cipher, ciphertexts match plaintext length exactly)',
             iv_nonce_requirement: 'IV (16-byte Initialization Vector)',
             iv_hex: ivHex,
-            security_observation: 'IV reuse must be avoided. Bit errors in ciphertext propagate to one full block plus corresponding bit.',
-            parallel_encryption: 'No'
+            security_observation: 'Hides plaintext patterns. Requires an IV; encryption is sequential; does not provide authentication.',
+            parallel_encryption: 'No (Sequential)'
         };
 
         // 4. OFB (Stream mode, 16-byte random IV)
@@ -238,10 +238,10 @@ document.addEventListener('DOMContentLoaded', () => {
             blocks: formatHexBlocksFromHex(ctHexOfb),
             decrypted_plaintext: decOfb,
             padding_requirement: 'No traditional padding (Keystream is generated iteratively and XORed directly with plaintext)',
-            iv_nonce_requirement: 'IV (16-byte Initialization Vector)',
+            iv_nonce_requirement: 'Unique IV (Requires unique 16-byte Initialization Vector)',
             iv_hex: ivHex,
-            security_observation: 'IV reuse must be avoided. Reusing the IV generates an identical keystream, compromising confidentiality.',
-            parallel_encryption: 'No'
+            security_observation: 'Hides plaintext patterns. Requires a unique IV (never reuse); encryption is sequential; does not provide authentication.',
+            parallel_encryption: 'No (Sequential)'
         };
 
         // 5. CTR (Stream mode, random Nonce)
@@ -265,10 +265,10 @@ document.addEventListener('DOMContentLoaded', () => {
             blocks: formatHexBlocksFromHex(ctHexCtr),
             decrypted_plaintext: decCtr,
             padding_requirement: 'No (Stream cipher mode; encrypted counter blocks are XORed directly with plaintext bytes)',
-            iv_nonce_requirement: 'Nonce/counter (Secure random nonce ensuring unique counter inputs)',
+            iv_nonce_requirement: 'Unique Nonce/counter (Secure random nonce ensuring unique counter inputs)',
             iv_hex: nonceHex,
-            security_observation: 'Never reuse the same nonce/counter with the same key. Highly efficient with full parallel encryption capability.',
-            parallel_encryption: 'Yes'
+            security_observation: 'Hides plaintext patterns. Requires a unique nonce/counter; no padding; supports parallel encryption, random access, and efficient processing. The same nonce/counter must never be reused with the same key.',
+            parallel_encryption: 'Yes (Parallelizable)'
         };
 
         return {

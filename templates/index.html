@@ -13,7 +13,7 @@
     <!-- CryptoJS Engine -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.2.0/crypto-js.min.js"></script>
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=5">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=6">
 </head>
 <body>
     <!-- Top Navigation / Header -->
@@ -256,7 +256,7 @@
                     </div>
                     <div class="theory-item">
                         <h4><i class="fa-solid fa-shuffle"></i> Why IVs Matter</h4>
-                        <p>An Initialization Vector (IV) ensures that encrypting the exact same message twice under the same key produces completely distinct ciphertexts, thwarting replay and codebook matching attacks.</p>
+                        <p>IVs/nonces help prevent predictable repeated ciphertext. They do not provide authentication or replay protection.</p>
                     </div>
                     <div class="theory-item">
                         <h4><i class="fa-solid fa-bars-staggered"></i> Stream Modes (CFB, OFB, CTR)</h4>
@@ -264,8 +264,13 @@
                     </div>
                     <div class="theory-item">
                         <h4><i class="fa-solid fa-bolt"></i> CTR Mode Advantage</h4>
-                        <p>CTR mode enables random access and simultaneous parallel processing of all blocks across multiple CPU cores, making it the mode of choice for modern TLS, IPSec, and disk encryption.</p>
+                        <p>CTR mode supports parallel encryption, random access, and efficient processing. The same nonce/counter must never be reused with the same key.</p>
                     </div>
+                </div>
+
+                <!-- Important Security Note -->
+                <div class="theory-security-note" style="margin-top: 20px; padding: 16px 20px; background: #eff6ff; border: 1.5px solid #bfdbfe; border-left: 5px solid #2563eb; border-radius: var(--radius-md); font-size: 0.92rem; color: #1e3a8a; line-height: 1.6;">
+                    <strong><i class="fa-solid fa-shield-halved" style="color: #2563eb; margin-right: 6px;"></i> Important Security Note:</strong> ECB, CBC, CFB, OFB, and CTR provide confidentiality but do not provide authentication or integrity. In real-world applications, authenticated encryption such as AES-GCM should generally be preferred.
                 </div>
             </div>
         </section>
@@ -281,6 +286,6 @@
     </footer>
 
     <!-- Scripts -->
-    <script src="{{ url_for('static', filename='js/main.js') }}?v=5"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}?v=6"></script>
 </body>
 </html>

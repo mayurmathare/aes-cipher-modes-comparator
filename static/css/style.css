@@ -847,6 +847,12 @@ textarea:focus, input[type="text"]:focus {
     border: 1px solid var(--warning-border);
 }
 
+.badge-neutral {
+    background: #f1f5f9;
+    color: #475569;
+    border: 1px solid #cbd5e1;
+}
+
 .tag-pill {
     background: #f1f5f9;
     border: 1px solid #cbd5e1;

@@ -39,57 +39,57 @@ COMPARISON_MATRIX = [
     {
         "mode": "ECB",
         "full_name": "Electronic Codebook",
-        "pattern_hiding": "No",
-        "pattern_class": "badge-danger",
-        "padding": "Yes",
+        "pattern_hiding": "No (Patterns Revealed)",
+        "pattern_class": "badge-neutral",
+        "padding": "Yes (PKCS#7)",
         "iv_nonce": "None",
-        "parallel_encryption": "Yes",
+        "parallel_encryption": "Yes (Parallelizable)",
         "parallel_class": "badge-success",
-        "security_concern": "Identical plaintext blocks produce identical ciphertext blocks."
+        "security_concern": "Repeated plaintext patterns can be revealed; lacks semantic security."
     },
     {
         "mode": "CBC",
         "full_name": "Cipher Block Chaining",
-        "pattern_hiding": "Yes",
+        "pattern_hiding": "Yes (Hides Patterns)",
         "pattern_class": "badge-success",
-        "padding": "Yes",
-        "iv_nonce": "IV",
-        "parallel_encryption": "No for encryption",
+        "padding": "Yes (PKCS#7)",
+        "iv_nonce": "Requires IV",
+        "parallel_encryption": "No (Sequential)",
         "parallel_class": "badge-warning",
-        "security_concern": "IV must be unpredictable; CBC alone does not provide authentication."
+        "security_concern": "Requires an IV; encryption is sequential; does not provide authentication."
     },
     {
         "mode": "CFB",
         "full_name": "Cipher Feedback",
-        "pattern_hiding": "Yes",
+        "pattern_hiding": "Yes (Hides Patterns)",
         "pattern_class": "badge-success",
         "padding": "No traditional padding",
-        "iv_nonce": "IV",
-        "parallel_encryption": "No",
+        "iv_nonce": "Requires IV",
+        "parallel_encryption": "No (Sequential)",
         "parallel_class": "badge-warning",
-        "security_concern": "IV reuse must be avoided."
+        "security_concern": "Requires an IV; encryption is sequential; does not provide authentication."
     },
     {
         "mode": "OFB",
         "full_name": "Output Feedback",
-        "pattern_hiding": "Yes",
+        "pattern_hiding": "Yes (Hides Patterns)",
         "pattern_class": "badge-success",
         "padding": "No traditional padding",
-        "iv_nonce": "IV",
-        "parallel_encryption": "No",
+        "iv_nonce": "Requires Unique IV",
+        "parallel_encryption": "No (Sequential)",
         "parallel_class": "badge-warning",
-        "security_concern": "IV reuse must be avoided."
+        "security_concern": "Requires a unique IV (never reuse); encryption is sequential; lacks authentication."
     },
     {
         "mode": "CTR",
         "full_name": "Counter Mode",
-        "pattern_hiding": "Yes",
+        "pattern_hiding": "Yes (Hides Patterns)",
         "pattern_class": "badge-success",
         "padding": "No",
-        "iv_nonce": "Nonce/counter",
-        "parallel_encryption": "Yes",
+        "iv_nonce": "Requires Unique Nonce/counter",
+        "parallel_encryption": "Yes (Parallelizable)",
         "parallel_class": "badge-success",
-        "security_concern": "Never reuse the same nonce/counter with the same key."
+        "security_concern": "Requires unique nonce/counter (never reuse with same key); lacks authentication."
     }
 ]
 

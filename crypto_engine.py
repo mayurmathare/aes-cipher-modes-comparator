@@ -84,7 +84,7 @@ def compare_all_modes(plaintext: str, key_str: str) -> dict:
         'padding_type': 'PKCS#7',
         'iv_nonce_requirement': 'None (ECB does not take an IV or Nonce)',
         'iv_hex': None,
-        'security_observation': 'Identical plaintext blocks produce identical ciphertext blocks. Lacks semantic security; exposes underlying patterns.',
+        'security_observation': 'Repeated plaintext patterns can be revealed; identical plaintext blocks produce identical ciphertext blocks. Lacks semantic security; does not provide authentication.',
         'pattern_hiding': 'No',
         'parallel_encryption': 'Yes'
     }
@@ -112,9 +112,9 @@ def compare_all_modes(plaintext: str, key_str: str) -> dict:
         'padding_type': 'PKCS#7',
         'iv_nonce_requirement': 'IV (16-byte random, unpredictable Initialization Vector)',
         'iv_hex': iv_16.hex(),
-        'security_observation': 'IV must be unpredictable; CBC alone does not provide authentication. Vulnerable to padding oracle attacks if not authenticated.',
+        'security_observation': 'Hides plaintext patterns. Requires an unpredictable IV; encryption is sequential; does not provide authentication or integrity.',
         'pattern_hiding': 'Yes',
-        'parallel_encryption': 'No for encryption'
+        'parallel_encryption': 'No (Sequential)'
     }
     
     # -------------------------------------------------------------
@@ -139,9 +139,9 @@ def compare_all_modes(plaintext: str, key_str: str) -> dict:
         'padding_type': 'None',
         'iv_nonce_requirement': 'IV (16-byte Initialization Vector)',
         'iv_hex': iv_16.hex(),
-        'security_observation': 'IV reuse must be avoided. Bit errors in ciphertext propagate to one full block plus corresponding bit.',
+        'security_observation': 'Hides plaintext patterns. Requires an IV; encryption is sequential; does not provide authentication.',
         'pattern_hiding': 'Yes',
-        'parallel_encryption': 'No'
+        'parallel_encryption': 'No (Sequential)'
     }
     
     # -------------------------------------------------------------
@@ -164,11 +164,11 @@ def compare_all_modes(plaintext: str, key_str: str) -> dict:
         'decrypted_plaintext': decrypted_ofb,
         'padding_requirement': 'No traditional padding (Keystream is generated iteratively and XORed directly with plaintext)',
         'padding_type': 'None',
-        'iv_nonce_requirement': 'IV (16-byte Initialization Vector)',
+        'iv_nonce_requirement': 'Unique IV (Requires unique 16-byte Initialization Vector)',
         'iv_hex': iv_16.hex(),
-        'security_observation': 'IV reuse must be avoided. Reusing the IV generates an identical keystream, compromising confidentiality.',
+        'security_observation': 'Hides plaintext patterns. Requires a unique IV (never reuse); encryption is sequential; does not provide authentication.',
         'pattern_hiding': 'Yes',
-        'parallel_encryption': 'No'
+        'parallel_encryption': 'No (Sequential)'
     }
     
     # -------------------------------------------------------------
@@ -191,11 +191,11 @@ def compare_all_modes(plaintext: str, key_str: str) -> dict:
         'decrypted_plaintext': decrypted_ctr,
         'padding_requirement': 'No (Stream cipher mode; encrypted counter blocks are XORed directly with plaintext bytes)',
         'padding_type': 'None',
-        'iv_nonce_requirement': 'Nonce/counter (Secure random nonce ensuring unique counter inputs)',
+        'iv_nonce_requirement': 'Unique Nonce/counter (Secure random nonce ensuring unique counter inputs)',
         'iv_hex': nonce_8.hex(),
-        'security_observation': 'Never reuse the same nonce/counter with the same key. Highly efficient with full parallel encryption capability.',
+        'security_observation': 'Hides plaintext patterns. Requires a unique nonce/counter; no padding; supports parallel encryption, random access, and efficient processing. The same nonce/counter must never be reused with the same key.',
         'pattern_hiding': 'Yes',
-        'parallel_encryption': 'Yes'
+        'parallel_encryption': 'Yes (Parallelizable)'
     }
     
     return {
