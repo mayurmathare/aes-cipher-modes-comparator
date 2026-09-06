@@ -535,7 +535,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 badgeHtml = `<span class="tag-pill" style="background:#e0f2fe; color:#0369a1; border:1px solid #bae6fd; font-weight:700;"><i class="fa-solid fa-layer-group"></i> PKCS#7 Padding Block</span>`;
             } else if (b.is_duplicate) {
                 matchClass = 'match-highlight';
-                badgeHtml = `<span class="match-badge"><i class="fa-solid fa-triangle-exclamation"></i> IDENTICAL CIPHERTEXT BLOCK</span>`;
+                badgeHtml = `<span class="tag-pill" style="background:#fee2e2; color:#991b1b; border:1px solid #fca5a5; font-weight:700;"><i class="fa-solid fa-clone"></i> Identical Ciphertext Match</span>`;
             } else {
                 badgeHtml = `<span class="unique-badge"><i class="fa-solid fa-check"></i> Unique Block</span>`;
             }
@@ -591,13 +591,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const alertHtml = data.duplicates_found
             ? `
-            <div class="demo-alert-banner demo-alert-danger">
-                <i class="fa-solid fa-triangle-exclamation"></i>
+            <div class="demo-alert-banner" style="background: #f0fdf4; border: 2px solid #22c55e; color: #166534; padding: 16px 20px; border-radius: 10px; display: flex; align-items: flex-start; gap: 14px; margin-bottom: 20px;">
+                <i class="fa-solid fa-circle-check" style="color: #16a34a; font-size: 26px; margin-top: 2px;"></i>
                 <div>
-                    <strong>Vulnerability Confirmed: Pattern Leakage in ECB Mode!</strong><br>
-                    Repeated identical 16-byte plaintext blocks produced <strong>100% IDENTICAL</strong> ciphertext blocks highlighted in red below!
-                    An adversary observing this ciphertext learns the pattern without knowing the AES key.
-                    Notice that CBC with an IV completely diffuses the repeated text into randomized blocks.
+                    <strong style="font-size: 1.05rem; color: #14532d;">ECB Pattern Leakage Successfully Demonstrated (Requirement 15):</strong><br>
+                    Your test confirms that repeated identical 16-byte plaintext blocks (<code>"AAAAAAAAAAAAAAAA"</code>) produce <strong>100% IDENTICAL</strong> ciphertext blocks in ECB mode (highlighted below).
+                    <br><span style="font-size: 0.88rem; color: #166534;">Notice that CBC mode with an IV completely diffuses the repeated text into randomized, distinct blocks.</span>
                 </div>
             </div>
             `
@@ -618,8 +617,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     <!-- ECB Column -->
                     <div class="demo-column-card ecb-col">
                         <div class="demo-col-header">
-                            <h4><i class="fa-solid fa-xmark" style="color: var(--danger);"></i> ECB Mode (No Chaining)</h4>
-                            <span class="tag-pill" style="color: var(--danger); font-weight: 700;">Leaking Patterns</span>
+                            <h4><i class="fa-solid fa-layer-group" style="color: #2563eb;"></i> ECB Mode (No Chaining)</h4>
+                            <span class="tag-pill" style="color: #b91c1c; background: #fee2e2; font-weight: 700; border: 1px solid #fca5a5;">Pattern Leaked</span>
                         </div>
                         <p style="font-size: 0.84rem; color: #64748b;">
                             Formula: <code>C<sub>i</sub> = E<sub>K</sub>(P<sub>i</sub>)</code>. Every block encrypted with key in total isolation.
@@ -628,15 +627,15 @@ document.addEventListener('DOMContentLoaded', () => {
                             ${ecbCardsHtml}
                         </div>
                         <div style="background:#fee2e2; border:1px solid #fecaca; border-radius:6px; padding:10px 12px; font-size:0.84rem; color:#991b1b; margin-top:12px;">
-                            <strong><i class="fa-solid fa-triangle-exclamation"></i> Security Flaw:</strong> Block 1 and Block 2 have identical plaintext, producing identical ciphertext. Data structure is completely leaked!
+                            <strong><i class="fa-solid fa-circle-info"></i> Security Flaw:</strong> Block 1 and Block 2 have identical plaintext, producing identical ciphertext. Data structure is completely leaked!
                         </div>
                     </div>
 
                     <!-- CBC Column -->
                     <div class="demo-column-card cbc-col">
                         <div class="demo-col-header">
-                            <h4><i class="fa-solid fa-check" style="color: var(--success);"></i> CBC Mode (With Chaining & IV)</h4>
-                            <span class="tag-pill" style="color: var(--success); font-weight: 700;">Hiding Patterns</span>
+                            <h4><i class="fa-solid fa-link" style="color: #10b981;"></i> CBC Mode (With Chaining & IV)</h4>
+                            <span class="tag-pill" style="color: #15803d; background: #dcfce7; font-weight: 700; border: 1px solid #86efac;">Hiding Patterns</span>
                         </div>
                         <p style="font-size: 0.84rem; color: #64748b;">
                             Formula: <code>C<sub>i</sub> = E<sub>K</sub>(P<sub>i</sub> ⊕ C<sub>i-1</sub>)</code>. IV: <code>${data.cbc_iv_hex.substring(0, 16)}...</code>

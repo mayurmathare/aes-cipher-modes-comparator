@@ -1055,19 +1055,17 @@ textarea:focus, input[type="text"]:focus {
 
 .block-chip-hex {
     font-family: 'Fira Code', monospace;
-    font-size: 0.85rem;
-    word-break: keep-all;
-    overflow-wrap: break-word;
-    white-space: normal;
+    font-size: 0.76rem;
+    white-space: nowrap;
+    overflow-x: auto;
     color: #0f172a;
     background: #f1f5f9;
-    padding: 8px 10px;
+    padding: 6px 10px;
     border-radius: 6px;
-    line-height: 1.8;
-    letter-spacing: 0.04em;
+    letter-spacing: 0.02em;
     display: flex;
-    flex-wrap: wrap;
-    gap: 4px;
+    flex-wrap: nowrap;
+    gap: 3px;
     align-items: center;
 }
 
@@ -1076,13 +1074,18 @@ textarea:focus, input[type="text"]:focus {
     color: #475569;
     margin-right: 4px;
     white-space: nowrap;
+    flex-shrink: 0;
 }
 
 .block-chip-hex .byte-val {
     display: inline-block;
     white-space: nowrap;
     background: rgba(0, 0, 0, 0.04);
-    padding: 1px 4px;
+    padding: 2px 3px;
+    border-radius: 3px;
+    font-weight: 600;
+    font-size: 0.76rem;
+}
     border-radius: 3px;
     font-weight: 600;
 }
