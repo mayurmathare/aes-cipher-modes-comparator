@@ -535,7 +535,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 badgeHtml = `<span class="tag-pill" style="background:#e0f2fe; color:#0369a1; border:1px solid #bae6fd; font-weight:700;"><i class="fa-solid fa-layer-group"></i> PKCS#7 Padding Block</span>`;
             } else if (b.is_duplicate) {
                 matchClass = 'match-highlight';
-                badgeHtml = `<span class="tag-pill" style="background:#fee2e2; color:#991b1b; border:1px solid #fca5a5; font-weight:700;"><i class="fa-solid fa-clone"></i> Identical Ciphertext Match</span>`;
+                badgeHtml = `<span class="tag-pill" style="background:#dcfce7; color:#15803d; border:1px solid #86efac; font-weight:700;"><i class="fa-solid fa-clone"></i> Identical Ciphertext Match</span>`;
             } else {
                 badgeHtml = `<span class="unique-badge"><i class="fa-solid fa-check"></i> Unique Block</span>`;
             }
@@ -617,8 +617,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     <!-- ECB Column -->
                     <div class="demo-column-card ecb-col">
                         <div class="demo-col-header">
-                            <h4><i class="fa-solid fa-layer-group" style="color: #2563eb;"></i> ECB Mode (No Chaining)</h4>
-                            <span class="tag-pill" style="color: #b91c1c; background: #fee2e2; font-weight: 700; border: 1px solid #fca5a5;">Pattern Leaked</span>
+                            <h4><i class="fa-solid fa-layer-group" style="color: #10b981;"></i> ECB Mode (No Chaining)</h4>
+                            <span class="tag-pill" style="color: #15803d; background: #dcfce7; font-weight: 700; border: 1px solid #86efac;">Pattern Leaked</span>
                         </div>
                         <p style="font-size: 0.84rem; color: #64748b;">
                             Formula: <code>C<sub>i</sub> = E<sub>K</sub>(P<sub>i</sub>)</code>. Every block encrypted with key in total isolation.
@@ -626,8 +626,8 @@ document.addEventListener('DOMContentLoaded', () => {
                         <div style="display: flex; flex-direction: column; gap: 10px;">
                             ${ecbCardsHtml}
                         </div>
-                        <div style="background:#fee2e2; border:1px solid #fecaca; border-radius:6px; padding:10px 12px; font-size:0.84rem; color:#991b1b; margin-top:12px;">
-                            <strong><i class="fa-solid fa-circle-info"></i> Security Flaw:</strong> Block 1 and Block 2 have identical plaintext, producing identical ciphertext. Data structure is completely leaked!
+                        <div style="background:#f0fdf4; border:1px solid #bbf7d0; border-radius:6px; padding:10px 12px; font-size:0.84rem; color:#166534; margin-top:12px;">
+                            <strong><i class="fa-solid fa-circle-check"></i> Pattern Verification:</strong> Block 1 and Block 2 have identical plaintext, producing identical ciphertext. Pattern leakage successfully demonstrated!
                         </div>
                     </div>
 
