@@ -24,15 +24,15 @@ if %ERRORLEVEL% EQU 0 (
     echo ======================================================================
     echo [SUCCESS] Code pushed to GitHub successfully!
     echo.
-    echo Repository: https://github.com/mayurmathare265/aes-cipher-modes-comparator
+    echo Repository: https://github.com/mayurmathare/aes-cipher-modes-comparator
     echo.
     echo To activate your live website on GitHub Pages:
-    echo 1. Go to: https://github.com/mayurmathare265/aes-cipher-modes-comparator/settings/pages
+    echo 1. Go to: https://github.com/mayurmathare/aes-cipher-modes-comparator/settings/pages
     echo 2. Under "Build and deployment" -> "Source", select "GitHub Actions"
     echo    (Or choose "Deploy from a branch" -> "main" -> root "/").
     echo.
     echo Your live website will be accessible at:
-    echo https://mayurmathare265.github.io/aes-cipher-modes-comparator/
+    echo https://mayurmathare.github.io/aes-cipher-modes-comparator/
     echo ======================================================================
 ) else (
     echo.

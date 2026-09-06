@@ -1,9 +1,9 @@
 # Comparison of Block Cipher Modes of Operation
 ### Cryptography Practical / TAE Web Application Simulator
 
-[![Deploy to GitHub Pages](https://github.com/mayurmathare265/aes-cipher-modes-comparator/actions/workflows/deploy.yml/badge.svg)](https://github.com/mayurmathare265/aes-cipher-modes-comparator/actions/workflows/deploy.yml)
+[![Deploy to GitHub Pages](https://github.com/mayurmathare/aes-cipher-modes-comparator/actions/workflows/deploy.yml/badge.svg)](https://github.com/mayurmathare/aes-cipher-modes-comparator/actions/workflows/deploy.yml)
 
-🌐 **Live Interactive Web Simulator**: [https://mayurmathare265.github.io/aes-cipher-modes-comparator/](https://mayurmathare265.github.io/aes-cipher-modes-comparator/)
+🌐 **Live Interactive Web Simulator**: [https://mayurmathare.github.io/aes-cipher-modes-comparator/](https://mayurmathare.github.io/aes-cipher-modes-comparator/)
 
 An interactive, educational web application designed to demonstrate, analyze, and compare the five NIST standard AES block cipher modes of operation:
 1. **ECB (Electronic Codebook)**
@@ -84,12 +84,12 @@ git push -u origin main
 
 ### 2. Enable GitHub Pages (One-Time Setup)
 1. Go to your repository settings:
-   `https://github.com/mayurmathare265/aes-cipher-modes-comparator/settings/pages`
+   `https://github.com/mayurmathare/aes-cipher-modes-comparator/settings/pages`
 2. Under **Build and deployment** > **Source**:
    - Select **GitHub Actions** (recommended, deploys automatically via `.github/workflows/deploy.yml`).
    - *Or* select **Deploy from a branch** > branch **`main`** > folder **`/ (root)`** and click **Save**.
 3. Within 1-2 minutes, your website will be live at:
-   **`https://mayurmathare265.github.io/aes-cipher-modes-comparator/`**
+   **`https://mayurmathare.github.io/aes-cipher-modes-comparator/`**
 
 ---
 

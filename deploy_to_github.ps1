@@ -18,9 +18,9 @@ git push -u origin main
 if ($LASTEXITCODE -eq 0) {
     Write-Host "`n======================================================================" -ForegroundColor Green
     Write-Host "[SUCCESS] Successfully pushed to GitHub!" -ForegroundColor Green
-    Write-Host "Repository: https://github.com/mayurmathare265/aes-cipher-modes-comparator" -ForegroundColor Yellow
+    Write-Host "Repository: https://github.com/mayurmathare/aes-cipher-modes-comparator" -ForegroundColor Yellow
     Write-Host "`nYour Live Web URL will be:" -ForegroundColor Cyan
-    Write-Host "https://mayurmathare265.github.io/aes-cipher-modes-comparator/" -ForegroundColor Green
+    Write-Host "https://mayurmathare.github.io/aes-cipher-modes-comparator/" -ForegroundColor Green
     Write-Host "======================================================================" -ForegroundColor Green
 } else {
     Write-Host "`n[NOTE] If authentication is required, please sign in via the browser popup and re-run." -ForegroundColor Yellow
