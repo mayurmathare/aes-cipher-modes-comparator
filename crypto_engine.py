@@ -234,6 +234,8 @@ def demonstrate_ecb_pattern(repeated_text: str, key_str: str) -> dict:
     for blk in ecb_blocks:
         blk['is_duplicate'] = (hex_counts[blk['hex']] > 1)
         blk['duplicate_count'] = hex_counts[blk['hex']]
+        start = (blk['index'] - 1) * 16
+        blk['pt_slice'] = repeated_text[start:start+16] if start < len(repeated_text) else '(PKCS#7 Padding Block)'
     
     # 3. CBC Encryption with PKCS#7 for contrast
     iv_cbc = get_random_bytes(16)
@@ -245,6 +247,8 @@ def demonstrate_ecb_pattern(repeated_text: str, key_str: str) -> dict:
     for blk in cbc_blocks:
         blk['is_duplicate'] = False
         blk['duplicate_count'] = 1
+        start = (blk['index'] - 1) * 16
+        blk['pt_slice'] = repeated_text[start:start+16] if start < len(repeated_text) else '(PKCS#7 Padding Block)'
 
     # Check if ECB actually leaked patterns
     duplicates_found = any(blk['is_duplicate'] for blk in ecb_blocks)

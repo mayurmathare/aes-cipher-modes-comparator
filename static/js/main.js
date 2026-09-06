@@ -299,6 +299,8 @@ document.addEventListener('DOMContentLoaded', () => {
         ecbBlocks.forEach(b => {
             b.is_duplicate = (hexCounts[b.hex] > 1);
             b.duplicate_count = hexCounts[b.hex];
+            const start = (b.index - 1) * 16;
+            b.pt_slice = (start < repeatedText.length) ? repeatedText.slice(start, start + 16) : '(PKCS#7 Padding Block)';
         });
 
         // CBC for contrast
@@ -313,6 +315,8 @@ document.addEventListener('DOMContentLoaded', () => {
         cbcBlocks.forEach(b => {
             b.is_duplicate = false;
             b.duplicate_count = 1;
+            const start = (b.index - 1) * 16;
+            b.pt_slice = (start < repeatedText.length) ? repeatedText.slice(start, start + 16) : '(PKCS#7 Padding Block)';
         });
 
         const duplicatesFound = ecbBlocks.some(b => b.is_duplicate);
@@ -521,28 +525,32 @@ document.addEventListener('DOMContentLoaded', () => {
             const badge = b.is_duplicate 
                 ? `<span class="match-badge"><i class="fa-solid fa-triangle-exclamation"></i> IDENTICAL CIPHERTEXT BLOCK</span>` 
                 : `<span class="unique-badge"><i class="fa-solid fa-check"></i> Unique Block</span>`;
+            const ptDisplay = b.pt_slice ? escapeHtml(b.pt_slice) : '';
             ecbCardsHtml += `
                 <div class="block-demo-chip ${matchClass}">
                     <div class="block-chip-head">
                         <span class="block-chip-num">Block ${b.index} (${b.byte_count} bytes)</span>
                         ${badge}
                     </div>
-                    <div class="block-chip-hex">${b.formatted_hex}</div>
-                    <div class="block-ascii">Plaintext ASCII: "${escapeHtml(b.ascii_preview)}"</div>
+                    ${ptDisplay ? `<div class="block-pt-row" style="font-size: 0.8rem; color: #475569; margin: 3px 0;"><strong>Input Plaintext:</strong> <code>"${ptDisplay}"</code></div>` : ''}
+                    <div class="block-chip-hex"><strong>Ciphertext Hex:</strong> ${b.formatted_hex}</div>
+                    <div class="block-ascii">Ciphertext Bytes ASCII: "${escapeHtml(b.ascii_preview)}"</div>
                 </div>
             `;
         });
 
         let cbcCardsHtml = '';
         data.cbc_blocks.forEach(b => {
+            const ptDisplay = b.pt_slice ? escapeHtml(b.pt_slice) : '';
             cbcCardsHtml += `
                 <div class="block-demo-chip unique-highlight">
                     <div class="block-chip-head">
                         <span class="block-chip-num">Block ${b.index} (${b.byte_count} bytes)</span>
                         <span class="unique-badge"><i class="fa-solid fa-shield-halved"></i> Pattern Hidden</span>
                     </div>
-                    <div class="block-chip-hex">${b.formatted_hex}</div>
-                    <div class="block-ascii">Plaintext ASCII: "${escapeHtml(b.ascii_preview)}"</div>
+                    ${ptDisplay ? `<div class="block-pt-row" style="font-size: 0.8rem; color: #475569; margin: 3px 0;"><strong>Input Plaintext:</strong> <code>"${ptDisplay}"</code></div>` : ''}
+                    <div class="block-chip-hex"><strong>Ciphertext Hex:</strong> ${b.formatted_hex}</div>
+                    <div class="block-ascii">Ciphertext Bytes ASCII: "${escapeHtml(b.ascii_preview)}"</div>
                 </div>
             `;
         });
