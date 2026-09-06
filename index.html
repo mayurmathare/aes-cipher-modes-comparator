@@ -10,10 +10,10 @@
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- CryptoJS Engine -->
+    <!-- CryptoJS (Client-side AES engine for GitHub Pages) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.2.0/crypto-js.min.js"></script>
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="static/css/style.css">
 </head>
 <body>
     <!-- Top Navigation / Header -->
@@ -29,8 +29,8 @@
                 </div>
             </div>
             <div class="header-badges">
-                <span class="tech-badge"><i class="fa-brands fa-python"></i> Python & Flask</span>
-                <span class="tech-badge"><i class="fa-solid fa-lock"></i> PyCryptodome (AES-128)</span>
+                <span class="tech-badge" id="env-badge"><i class="fa-brands fa-github"></i> GitHub Pages Live</span>
+                <span class="tech-badge"><i class="fa-solid fa-lock"></i> AES-128 (ECB, CBC, CFB, OFB, CTR)</span>
             </div>
         </div>
     </header>
@@ -126,7 +126,7 @@
             <!-- Loader -->
             <div class="loading-state" id="loading-state" style="display: none;">
                 <div class="spinner"></div>
-                <p>Executing AES across ECB, CBC, CFB, OFB, and CTR modes with PyCryptodome...</p>
+                <p>Executing AES across ECB, CBC, CFB, OFB, and CTR modes...</p>
             </div>
 
             <!-- 5 Mode Cards Grid -->
@@ -155,42 +155,151 @@
                             </tr>
                         </thead>
                         <tbody>
-                            {% for row in comparison_matrix %}
-                            <tr class="mode-row-{{ row.mode.lower() }}">
+                            <!-- ECB -->
+                            <tr class="mode-row-ecb">
                                 <td class="col-mode">
                                     <div class="mode-title-cell">
-                                        <span class="mode-badge">{{ row.mode }}</span>
-                                        <span class="mode-full">{{ row.full_name }}</span>
+                                        <span class="mode-badge">ECB</span>
+                                        <span class="mode-full">Electronic Codebook</span>
                                     </div>
                                 </td>
                                 <td class="col-pattern">
-                                    <span class="badge {{ row.pattern_class }}">
-                                        {% if row.pattern_hiding == 'Yes' %}
-                                        <i class="fa-solid fa-check"></i> Yes
-                                        {% else %}
+                                    <span class="badge badge-danger">
                                         <i class="fa-solid fa-xmark"></i> No
-                                        {% endif %}
                                     </span>
                                 </td>
                                 <td class="col-padding">
-                                    <code>{{ row.padding }}</code>
+                                    <code>Yes</code>
                                 </td>
                                 <td class="col-iv">
-                                    <span class="tag-pill">{{ row.iv_nonce }}</span>
+                                    <span class="tag-pill">None</span>
                                 </td>
                                 <td class="col-parallel">
-                                    <span class="badge {{ row.parallel_class }}">
-                                        {{ row.parallel_encryption }}
+                                    <span class="badge badge-success">Yes</span>
+                                </td>
+                                <td class="col-concern">
+                                    <div class="security-concern-box">
+                                        <i class="fa-solid fa-triangle-exclamation" style="color: var(--danger);"></i>
+                                        <span>Identical plaintext blocks produce identical ciphertext blocks.</span>
+                                    </div>
+                                </td>
+                            </tr>
+                            <!-- CBC -->
+                            <tr class="mode-row-cbc">
+                                <td class="col-mode">
+                                    <div class="mode-title-cell">
+                                        <span class="mode-badge">CBC</span>
+                                        <span class="mode-full">Cipher Block Chaining</span>
+                                    </div>
+                                </td>
+                                <td class="col-pattern">
+                                    <span class="badge badge-success">
+                                        <i class="fa-solid fa-check"></i> Yes
                                     </span>
+                                </td>
+                                <td class="col-padding">
+                                    <code>Yes</code>
+                                </td>
+                                <td class="col-iv">
+                                    <span class="tag-pill">IV</span>
+                                </td>
+                                <td class="col-parallel">
+                                    <span class="badge badge-warning">No for encryption</span>
                                 </td>
                                 <td class="col-concern">
                                     <div class="security-concern-box">
                                         <i class="fa-solid fa-triangle-exclamation"></i>
-                                        <span>{{ row.security_concern }}</span>
+                                        <span>IV must be unpredictable; CBC alone does not provide authentication.</span>
                                     </div>
                                 </td>
                             </tr>
-                            {% endfor %}
+                            <!-- CFB -->
+                            <tr class="mode-row-cfb">
+                                <td class="col-mode">
+                                    <div class="mode-title-cell">
+                                        <span class="mode-badge">CFB</span>
+                                        <span class="mode-full">Cipher Feedback</span>
+                                    </div>
+                                </td>
+                                <td class="col-pattern">
+                                    <span class="badge badge-success">
+                                        <i class="fa-solid fa-check"></i> Yes
+                                    </span>
+                                </td>
+                                <td class="col-padding">
+                                    <code>No traditional padding</code>
+                                </td>
+                                <td class="col-iv">
+                                    <span class="tag-pill">IV</span>
+                                </td>
+                                <td class="col-parallel">
+                                    <span class="badge badge-warning">No</span>
+                                </td>
+                                <td class="col-concern">
+                                    <div class="security-concern-box">
+                                        <i class="fa-solid fa-triangle-exclamation"></i>
+                                        <span>IV reuse must be avoided.</span>
+                                    </div>
+                                </td>
+                            </tr>
+                            <!-- OFB -->
+                            <tr class="mode-row-ofb">
+                                <td class="col-mode">
+                                    <div class="mode-title-cell">
+                                        <span class="mode-badge">OFB</span>
+                                        <span class="mode-full">Output Feedback</span>
+                                    </div>
+                                </td>
+                                <td class="col-pattern">
+                                    <span class="badge badge-success">
+                                        <i class="fa-solid fa-check"></i> Yes
+                                    </span>
+                                </td>
+                                <td class="col-padding">
+                                    <code>No traditional padding</code>
+                                </td>
+                                <td class="col-iv">
+                                    <span class="tag-pill">IV</span>
+                                </td>
+                                <td class="col-parallel">
+                                    <span class="badge badge-warning">No</span>
+                                </td>
+                                <td class="col-concern">
+                                    <div class="security-concern-box">
+                                        <i class="fa-solid fa-triangle-exclamation"></i>
+                                        <span>IV reuse must be avoided.</span>
+                                    </div>
+                                </td>
+                            </tr>
+                            <!-- CTR -->
+                            <tr class="mode-row-ctr">
+                                <td class="col-mode">
+                                    <div class="mode-title-cell">
+                                        <span class="mode-badge">CTR</span>
+                                        <span class="mode-full">Counter Mode</span>
+                                    </div>
+                                </td>
+                                <td class="col-pattern">
+                                    <span class="badge badge-success">
+                                        <i class="fa-solid fa-check"></i> Yes
+                                    </span>
+                                </td>
+                                <td class="col-padding">
+                                    <code>No</code>
+                                </td>
+                                <td class="col-iv">
+                                    <span class="tag-pill">Nonce/counter</span>
+                                </td>
+                                <td class="col-parallel">
+                                    <span class="badge badge-success">Yes</span>
+                                </td>
+                                <td class="col-concern">
+                                    <div class="security-concern-box">
+                                        <i class="fa-solid fa-triangle-exclamation"></i>
+                                        <span>Never reuse the same nonce/counter with the same key.</span>
+                                    </div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
@@ -276,11 +385,11 @@
     <footer class="site-footer">
         <div class="container footer-container">
             <p><strong>Cryptography Practical / TAE Simulator</strong> &bull; AES-128 Block Cipher Modes Comparison</p>
-            <p class="footer-note">Built with Python &bull; Flask &bull; PyCryptodome &bull; No Database Required</p>
+            <p class="footer-note">Educational Simulator &bull; Hosted on GitHub Pages &bull; Python &amp; PyCryptodome Compatible</p>
         </div>
     </footer>
 
     <!-- Scripts -->
-    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <script src="static/js/main.js"></script>
 </body>
 </html>
