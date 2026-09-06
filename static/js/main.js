@@ -101,19 +101,18 @@ document.addEventListener('DOMContentLoaded', () => {
         for (let i = 0; i < totalBlocks; i++) {
             const chunk = hexStr.slice(i * hexCharsPerBlock, (i + 1) * hexCharsPerBlock);
             let formatted = '';
-            let ascii = '';
+            const byteSpans = [];
             for (let j = 0; j < chunk.length; j += 2) {
                 const byteHex = chunk.substr(j, 2);
                 formatted += (j > 0 ? ' ' : '') + byteHex;
-                const byteVal = parseInt(byteHex, 16);
-                ascii += (byteVal >= 32 && byteVal <= 126) ? String.fromCharCode(byteVal) : '.';
+                byteSpans.push(`<span class="byte-val">${byteHex}</span>`);
             }
             blocks.push({
                 index: i + 1,
                 hex: chunk,
                 formatted_hex: formatted,
-                byte_count: chunk.length / 2,
-                ascii_preview: ascii
+                byte_spans: byteSpans.join(' '),
+                byte_count: chunk.length / 2
             });
         }
         return blocks;
@@ -346,7 +345,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="block-row">
                     <span class="block-tag">Block ${b.index}</span>
                     <span class="block-hex">${b.formatted_hex}</span>
-                    <span class="block-ascii">ASCII: "${b.ascii_preview}"</span>
+                    <span class="byte-counter">${b.byte_count} bytes</span>
                 </div>
             `).join('');
         }
@@ -519,38 +518,73 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Render ECB Demo output
     function renderEcbDemoData(data) {
+        function getByteSpans(b) {
+            if (b.byte_spans) return b.byte_spans;
+            const cleanHex = (b.hex || '').replace(/\s+/g, '');
+            const bytes = cleanHex.match(/.{1,2}/g) || [];
+            return bytes.map(byte => `<span class="byte-val">${byte}</span>`).join(' ');
+        }
+
         let ecbCardsHtml = '';
         data.ecb_blocks.forEach(b => {
-            const matchClass = b.is_duplicate ? 'match-highlight' : '';
-            const badge = b.is_duplicate 
-                ? `<span class="match-badge"><i class="fa-solid fa-triangle-exclamation"></i> IDENTICAL CIPHERTEXT BLOCK</span>` 
-                : `<span class="unique-badge"><i class="fa-solid fa-check"></i> Unique Block</span>`;
-            const ptDisplay = b.pt_slice ? escapeHtml(b.pt_slice) : '';
+            const isPadding = b.is_padding || (b.pt_slice && b.pt_slice.includes('Padding'));
+            let matchClass = '';
+            let badgeHtml = '';
+
+            if (isPadding) {
+                badgeHtml = `<span class="tag-pill" style="background:#e0f2fe; color:#0369a1; border:1px solid #bae6fd; font-weight:700;"><i class="fa-solid fa-layer-group"></i> PKCS#7 Padding Block</span>`;
+            } else if (b.is_duplicate) {
+                matchClass = 'match-highlight';
+                badgeHtml = `<span class="match-badge"><i class="fa-solid fa-triangle-exclamation"></i> IDENTICAL CIPHERTEXT BLOCK</span>`;
+            } else {
+                badgeHtml = `<span class="unique-badge"><i class="fa-solid fa-check"></i> Unique Block</span>`;
+            }
+
+            const ptText = isPadding ? '[PKCS#7 Padding: 16 bytes of 0x10]' : (b.pt_slice || '');
+
             ecbCardsHtml += `
                 <div class="block-demo-chip ${matchClass}">
                     <div class="block-chip-head">
                         <span class="block-chip-num">Block ${b.index} (${b.byte_count} bytes)</span>
-                        ${badge}
+                        ${badgeHtml}
                     </div>
-                    ${ptDisplay ? `<div class="block-pt-row" style="font-size: 0.8rem; color: #475569; margin: 3px 0;"><strong>Input Plaintext:</strong> <code>"${ptDisplay}"</code></div>` : ''}
-                    <div class="block-chip-hex"><strong>Ciphertext Hex:</strong> ${b.formatted_hex}</div>
-                    <div class="block-ascii">Ciphertext Bytes ASCII: "${escapeHtml(b.ascii_preview)}"</div>
+                    <div class="block-pt-row" style="font-size: 0.85rem; color: #334155; margin: 4px 0;">
+                        <strong>Input Plaintext:</strong> <code>"${escapeHtml(ptText)}"</code>
+                    </div>
+                    <div class="block-chip-hex">
+                        <span class="hex-label">Ciphertext:</span>
+                        ${getByteSpans(b)}
+                    </div>
                 </div>
             `;
         });
 
         let cbcCardsHtml = '';
         data.cbc_blocks.forEach(b => {
-            const ptDisplay = b.pt_slice ? escapeHtml(b.pt_slice) : '';
+            const isPadding = b.is_padding || (b.pt_slice && b.pt_slice.includes('Padding'));
+            let badgeHtml = '';
+
+            if (isPadding) {
+                badgeHtml = `<span class="tag-pill" style="background:#e0f2fe; color:#0369a1; border:1px solid #bae6fd; font-weight:700;"><i class="fa-solid fa-layer-group"></i> PKCS#7 Padding Block</span>`;
+            } else {
+                badgeHtml = `<span class="unique-badge"><i class="fa-solid fa-shield-halved"></i> Pattern Hidden</span>`;
+            }
+
+            const ptText = isPadding ? '[PKCS#7 Padding: 16 bytes of 0x10]' : (b.pt_slice || '');
+
             cbcCardsHtml += `
                 <div class="block-demo-chip unique-highlight">
                     <div class="block-chip-head">
                         <span class="block-chip-num">Block ${b.index} (${b.byte_count} bytes)</span>
-                        <span class="unique-badge"><i class="fa-solid fa-shield-halved"></i> Pattern Hidden</span>
+                        ${badgeHtml}
                     </div>
-                    ${ptDisplay ? `<div class="block-pt-row" style="font-size: 0.8rem; color: #475569; margin: 3px 0;"><strong>Input Plaintext:</strong> <code>"${ptDisplay}"</code></div>` : ''}
-                    <div class="block-chip-hex"><strong>Ciphertext Hex:</strong> ${b.formatted_hex}</div>
-                    <div class="block-ascii">Ciphertext Bytes ASCII: "${escapeHtml(b.ascii_preview)}"</div>
+                    <div class="block-pt-row" style="font-size: 0.85rem; color: #334155; margin: 4px 0;">
+                        <strong>Input Plaintext:</strong> <code>"${escapeHtml(ptText)}"</code>
+                    </div>
+                    <div class="block-chip-hex">
+                        <span class="hex-label">Ciphertext:</span>
+                        ${getByteSpans(b)}
+                    </div>
                 </div>
             `;
         });
@@ -593,6 +627,9 @@ document.addEventListener('DOMContentLoaded', () => {
                         <div style="display: flex; flex-direction: column; gap: 10px;">
                             ${ecbCardsHtml}
                         </div>
+                        <div style="background:#fee2e2; border:1px solid #fecaca; border-radius:6px; padding:10px 12px; font-size:0.84rem; color:#991b1b; margin-top:12px;">
+                            <strong><i class="fa-solid fa-triangle-exclamation"></i> Security Flaw:</strong> Block 1 and Block 2 have identical plaintext, producing identical ciphertext. Data structure is completely leaked!
+                        </div>
                     </div>
 
                     <!-- CBC Column -->
@@ -606,6 +643,9 @@ document.addEventListener('DOMContentLoaded', () => {
                         </p>
                         <div style="display: flex; flex-direction: column; gap: 10px;">
                             ${cbcCardsHtml}
+                        </div>
+                        <div style="background:#dcfce7; border:1px solid #bbf7d0; border-radius:6px; padding:10px 12px; font-size:0.84rem; color:#166534; margin-top:12px;">
+                            <strong><i class="fa-solid fa-shield-halved"></i> Security Maintained:</strong> CBC XORs preceding ciphertext and IV, so identical inputs produce completely randomized, unique ciphertext blocks.
                         </div>
                     </div>
                 </div>
